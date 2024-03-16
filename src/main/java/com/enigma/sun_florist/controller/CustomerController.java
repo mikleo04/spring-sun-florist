@@ -89,4 +89,20 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping(
+            path = "/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CommonResponse<CustomerResponse>> updateCustomer(@PathVariable(name = "id") String id, @RequestBody CustomerRequest request) {
+        CustomerResponse customerResponse = customerService.update(request, id);
+
+        CommonResponse<CustomerResponse> response = CommonResponse.<CustomerResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_UPDATE_DATA)
+                .data(customerResponse)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
 }

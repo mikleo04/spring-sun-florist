@@ -39,5 +39,24 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
     )
     Optional<Customer> getOneById(@Param("id") String id);
 
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = """
+                    UPDATE m_customer SET
+                    name = :name,
+                    birth_date = :birthDate,
+                    address = :address,
+                    mobile_phone_no = :mobilePhone
+                    WHERE id = :id
+                    """
+    )
+    void update(
+            @Param("id") String id,
+            @Param("name") String name,
+            @Param("birthDate") Date birthDate,
+            @Param("address") String address,
+            @Param("mobilePhone") String mobilePhone
+    );
 
 }

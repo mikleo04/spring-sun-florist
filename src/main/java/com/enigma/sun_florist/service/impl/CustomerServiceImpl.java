@@ -46,6 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CustomerResponse getById(String id) {
         Optional<Customer> customer = customerRepository.getOneById(id);
         if (customer.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
@@ -53,11 +54,28 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<CustomerResponse> getAll(SearchCustomerRequest request) {
         Sort sorting = Sort.by(Sort.Direction.fromString(request.getDirection()), request.getSortBy());
         Pageable pageable = PageRequest.of(request.getPage()-1, request.getSize(), sorting);
         Page<Customer> customerPage = customerRepository.findAll(pageable);
         return  customerPage.map(this::convertCustomerToCustomerResponse);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public CustomerResponse update(CustomerRequest request, String id) {
+        getById(id);
+        validationUtil.validate(request);
+        customerRepository.update(id, request.getName(), request.getBirthDate(), request.getAddress(), request.getMobilePhoneNo());
+        return CustomerResponse.builder()
+                .id(id)
+                .name(request.getName())
+                .birthDate(request.getBirthDate())
+                .mobilePhoneNo(request.getMobilePhoneNo())
+                .address(request.getAddress())
+                .status(true)
+                .build();
     }
 
 
