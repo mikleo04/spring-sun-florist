@@ -3,18 +3,20 @@ package com.enigma.sun_florist.controller;
 import com.enigma.sun_florist.constant.ResponseMessage;
 import com.enigma.sun_florist.constant.UrlAPI;
 import com.enigma.sun_florist.dto.request.FlowerRequest;
-import com.enigma.sun_florist.dto.response.CommonResponse;
-import com.enigma.sun_florist.dto.response.CustomerResponse;
-import com.enigma.sun_florist.dto.response.FlowerResponse;
+import com.enigma.sun_florist.dto.request.SearchFlowerRequest;
+import com.enigma.sun_florist.dto.response.*;
 import com.enigma.sun_florist.service.FlowerService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,6 +63,40 @@ public class FlowerController {
                 .statusCode(HttpStatus.OK.value())
                 .message(ResponseMessage.SUCCESS_GET_DATA)
                 .data(flowerResponse)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CommonPagingResponse<List<FlowerResponse>>> getAllFlower(
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "sortBy", defaultValue = "name") String sortBy,
+            @RequestParam(name = "direction", defaultValue = "ASC") String direction
+    ) {
+        SearchFlowerRequest request = SearchFlowerRequest.builder()
+                .size(size)
+                .page(page)
+                .sortBy(sortBy)
+                .direction(direction)
+                .build();
+        Page<FlowerResponse> flowerResponses = flowerService.getAll(request);
+
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .totalPage(flowerResponses.getTotalPages())
+                .totalElement(flowerResponses.getTotalElements())
+                .page(flowerResponses.getPageable().getPageNumber() + 1)
+                .size(flowerResponses.getSize())
+                .hasNext(flowerResponses.hasNext())
+                .hasPrevious(flowerResponses.hasPrevious())
+                .build();
+
+        CommonPagingResponse<List<FlowerResponse>> response = CommonPagingResponse.<List<FlowerResponse>>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_GET_DATA)
+                .data(flowerResponses.getContent())
+                .paging(pagingResponse)
                 .build();
 
         return ResponseEntity.ok(response);

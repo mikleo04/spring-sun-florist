@@ -3,6 +3,7 @@ package com.enigma.sun_florist.service.impl;
 import com.enigma.sun_florist.constant.ResponseMessage;
 import com.enigma.sun_florist.constant.UrlAPI;
 import com.enigma.sun_florist.dto.request.FlowerRequest;
+import com.enigma.sun_florist.dto.request.SearchFlowerRequest;
 import com.enigma.sun_florist.dto.response.FlowerResponse;
 import com.enigma.sun_florist.dto.response.ImageResponse;
 import com.enigma.sun_florist.entity.Flower;
@@ -12,6 +13,10 @@ import com.enigma.sun_florist.service.FlowerService;
 import com.enigma.sun_florist.service.ImageService;
 import com.enigma.sun_florist.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,10 +60,25 @@ public class FlowerServiceImpl implements FlowerService {
     public FlowerResponse getById(String id) {
         Optional<Flower> flower = flowerRepository.getOneById(id);
         if (flower.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
-        return convertProductToProductResponse(flower.get());
+        return convertFlowerToFlowerResponse(flower.get());
     }
 
-    private FlowerResponse convertProductToProductResponse(Flower flower) {
+    @Override
+    public Flower getOneById(String id) {
+        Optional<Flower> flower = flowerRepository.getOneById(id);
+        if (flower.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
+        return flower.get();
+    }
+
+    @Override
+    public Page<FlowerResponse> getAll(SearchFlowerRequest request) {
+        Sort sorting = Sort.by(Sort.Direction.fromString(request.getDirection()), request.getSortBy());
+        Pageable pageable = PageRequest.of(request.getPage()-1, request.getSize(), sorting);
+        Page<Flower> flowerPage = flowerRepository.findAll(pageable);
+        return flowerPage.map(this::convertFlowerToFlowerResponse);
+    }
+
+    private FlowerResponse convertFlowerToFlowerResponse(Flower flower) {
         return FlowerResponse.builder()
                 .id(flower.getId())
                 .name(flower.getName())
