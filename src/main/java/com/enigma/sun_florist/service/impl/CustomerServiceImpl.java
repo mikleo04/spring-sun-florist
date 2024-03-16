@@ -2,17 +2,23 @@ package com.enigma.sun_florist.service.impl;
 
 import com.enigma.sun_florist.constant.ResponseMessage;
 import com.enigma.sun_florist.dto.request.CustomerRequest;
+import com.enigma.sun_florist.dto.request.SearchCustomerRequest;
 import com.enigma.sun_florist.dto.response.CustomerResponse;
 import com.enigma.sun_florist.entity.Customer;
 import com.enigma.sun_florist.repository.CustomerRepository;
 import com.enigma.sun_florist.service.CustomerService;
 import com.enigma.sun_florist.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -45,6 +51,15 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
         return convertCustomerToCustomerResponse(customer.get());
     }
+
+    @Override
+    public Page<CustomerResponse> getAll(SearchCustomerRequest request) {
+        Sort sorting = Sort.by(Sort.Direction.fromString(request.getDirection()), request.getSortBy());
+        Pageable pageable = PageRequest.of(request.getPage()-1, request.getSize(), sorting);
+        Page<Customer> customerPage = customerRepository.findAll(pageable);
+        return  customerPage.map(this::convertCustomerToCustomerResponse);
+    }
+
 
     private CustomerResponse convertCustomerToCustomerResponse(Customer customer) {
         return CustomerResponse.builder()
