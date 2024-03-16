@@ -1,18 +1,23 @@
 package com.enigma.sun_florist.service.impl;
 
+import com.enigma.sun_florist.constant.ResponseMessage;
 import com.enigma.sun_florist.constant.UrlAPI;
 import com.enigma.sun_florist.dto.request.FlowerRequest;
 import com.enigma.sun_florist.dto.response.FlowerResponse;
 import com.enigma.sun_florist.dto.response.ImageResponse;
+import com.enigma.sun_florist.entity.Flower;
 import com.enigma.sun_florist.entity.Image;
 import com.enigma.sun_florist.repository.FlowerRepository;
 import com.enigma.sun_florist.service.FlowerService;
 import com.enigma.sun_florist.service.ImageService;
 import com.enigma.sun_florist.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -43,6 +48,26 @@ public class FlowerServiceImpl implements FlowerService {
                 .stock(request.getStock())
                 .price(request.getPrice())
                 .name(request.getName())
+                .build();
+    }
+
+    @Override
+    public FlowerResponse getById(String id) {
+        Optional<Flower> flower = flowerRepository.getOneById(id);
+        if (flower.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
+        return convertProductToProductResponse(flower.get());
+    }
+
+    private FlowerResponse convertProductToProductResponse(Flower flower) {
+        return FlowerResponse.builder()
+                .id(flower.getId())
+                .name(flower.getName())
+                .price(flower.getPrice())
+                .stock(flower.getStock())
+                .image(ImageResponse.builder()
+                        .url(UrlAPI.FLOWER_IMAGE_API + flower.getImage().getId())
+                        .name(flower.getImage().getName())
+                        .build())
                 .build();
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Repository
 public interface FlowerRepository extends JpaRepository<Flower, String> {
@@ -27,5 +28,14 @@ public interface FlowerRepository extends JpaRepository<Flower, String> {
             @Param("stock") Integer stock,
             @Param("imageId") String imageId
     );
+
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT * FROM m_flower
+                    WHERE id = :id
+                    """
+    )
+    Optional<Flower> getOneById(@Param("id") String id);
 
 }

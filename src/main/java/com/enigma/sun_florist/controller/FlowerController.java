@@ -4,6 +4,7 @@ import com.enigma.sun_florist.constant.ResponseMessage;
 import com.enigma.sun_florist.constant.UrlAPI;
 import com.enigma.sun_florist.dto.request.FlowerRequest;
 import com.enigma.sun_florist.dto.response.CommonResponse;
+import com.enigma.sun_florist.dto.response.CustomerResponse;
 import com.enigma.sun_florist.dto.response.FlowerResponse;
 import com.enigma.sun_florist.service.FlowerService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -12,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -51,6 +49,21 @@ public class FlowerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBuilder.build());
         }
 
+    }
+
+    @GetMapping(
+            path = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CommonResponse<FlowerResponse>> getFlowerById(@PathVariable(name = "id") String id) {
+        FlowerResponse flowerResponse = flowerService.getById(id);
+        CommonResponse<FlowerResponse> response = CommonResponse.<FlowerResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_GET_DATA)
+                .data(flowerResponse)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
 }
