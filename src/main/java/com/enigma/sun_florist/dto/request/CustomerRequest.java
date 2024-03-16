@@ -22,7 +22,7 @@ public class CustomerRequest {
 
     private String address;
 
-    @Pattern(message = "birth date is invalid", regexp = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$")
+//    @Pattern(message = "birth date is invalid", regexp = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$")
     private Date birthDate;
 
     @Column(name = "status")
