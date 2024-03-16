@@ -34,4 +34,19 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @GetMapping(
+            path = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<CommonResponse<CustomerResponse>> getCustomerById(@PathVariable(name = "id") String  id) {
+        CustomerResponse customerResponse = customerService.getById(id);
+        CommonResponse<CustomerResponse> response = CommonResponse.<CustomerResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_GET_DATA)
+                .data(customerResponse)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
 }

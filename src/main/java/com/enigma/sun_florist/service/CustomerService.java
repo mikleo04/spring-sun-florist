@@ -6,4 +6,5 @@ import com.enigma.sun_florist.dto.response.CustomerResponse;
 
 public interface CustomerService {
     CustomerResponse create(CustomerRequest request);
+    CustomerResponse getById(String id);
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, String> {
@@ -28,4 +29,12 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
             @Param("address") String address,
             @Param("mobilePhone") String mobilePhone
             );
+
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT * FROM m_customer WHERE id = :id
+                    """
+    )
+    Optional<Customer> getOneById(@Param("id") String id);
 }
