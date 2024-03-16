@@ -59,4 +59,15 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
             @Param("mobilePhone") String mobilePhone
     );
 
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = """
+                    UPDATE m_customer SET
+                    status = false
+                    WHERE id = :id
+                    """
+    )
+    void updateStatus(@Param("id") String id);
+
 }

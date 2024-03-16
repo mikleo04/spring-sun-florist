@@ -54,6 +54,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Customer getOneById(String id) {
+        Optional<Customer> customer = customerRepository.getOneById(id);
+        if (customer.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
+        return customer.get();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Page<CustomerResponse> getAll(SearchCustomerRequest request) {
         Sort sorting = Sort.by(Sort.Direction.fromString(request.getDirection()), request.getSortBy());
@@ -76,6 +83,13 @@ public class CustomerServiceImpl implements CustomerService {
                 .address(request.getAddress())
                 .status(true)
                 .build();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(String id) {
+        getById(id);
+        customerRepository.updateStatus(id);
     }
 
 

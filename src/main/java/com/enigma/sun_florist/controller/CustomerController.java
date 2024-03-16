@@ -105,4 +105,15 @@ public class CustomerController {
 
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<CommonResponse<CustomerResponse>> deleteCustomer(@PathVariable(name = "id") String id){
+        customerService.delete(id);
+        CommonResponse<CustomerResponse> response = CommonResponse.<CustomerResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_DELETE_DATA)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
 }
