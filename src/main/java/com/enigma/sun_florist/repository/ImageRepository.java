@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ImageRepository extends JpaRepository<Image, String> {
 
@@ -25,6 +27,25 @@ public interface ImageRepository extends JpaRepository<Image, String> {
             @Param("path") String path,
             @Param("size") Long size
     );
+
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT * FROM m_image
+                    WHERE id = :id
+                    """
+    )
+    Optional<Image> getOneById(@Param("id") String id);
+
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = """
+                    DELETE FROM m_image
+                    WHERE id = :id
+                    """
+    )
+    void deleteOneById(@Param("id") String id);
 
 
 }

@@ -57,6 +57,7 @@ public class FlowerServiceImpl implements FlowerService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public FlowerResponse getById(String id) {
         Optional<Flower> flower = flowerRepository.getOneById(id);
         if (flower.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
@@ -64,6 +65,7 @@ public class FlowerServiceImpl implements FlowerService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Flower getOneById(String id) {
         Optional<Flower> flower = flowerRepository.getOneById(id);
         if (flower.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);
@@ -71,11 +73,42 @@ public class FlowerServiceImpl implements FlowerService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<FlowerResponse> getAll(SearchFlowerRequest request) {
         Sort sorting = Sort.by(Sort.Direction.fromString(request.getDirection()), request.getSortBy());
         Pageable pageable = PageRequest.of(request.getPage()-1, request.getSize(), sorting);
         Page<Flower> flowerPage = flowerRepository.findAll(pageable);
         return flowerPage.map(this::convertFlowerToFlowerResponse);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public FlowerResponse update(FlowerRequest request, String id) {
+        validationUtil.validate(request);
+        Flower flower = getOneById(id);
+        String imageId = flower.getImage().getId();
+        String currentImageId = flower.getImage().getId();
+        if (request.getImage() != null) {
+            Image image = imageService.create(request.getImage());
+            imageId = image.getId();
+        }
+        flowerRepository.update(id, request.getName(), request.getPrice(), request.getStock(), imageId);
+        if (request.getImage() != null) {
+            imageService.delete(currentImageId);
+        }
+
+        ImageResponse imageResponse = ImageResponse.builder()
+                .name(flower.getImage().getName())
+                .url(UrlAPI.FLOWER_IMAGE_API + flower.getImage().getId())
+                .build();
+
+        return FlowerResponse.builder()
+                .id(id)
+                .name(request.getName())
+                .price(request.getPrice())
+                .stock(request.getStock())
+                .image(imageResponse)
+                .build();
     }
 
     private FlowerResponse convertFlowerToFlowerResponse(Flower flower) {

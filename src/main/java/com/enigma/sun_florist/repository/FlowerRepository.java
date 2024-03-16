@@ -38,4 +38,24 @@ public interface FlowerRepository extends JpaRepository<Flower, String> {
     )
     Optional<Flower> getOneById(@Param("id") String id);
 
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = """
+                    UPDATE m_flower SET
+                    name = :name,
+                    price = :price,
+                    stock = :stock,
+                    image_id = :imageId
+                    WHERE id = :id
+                    """
+    )
+    void update(
+            @Param("id") String id,
+            @Param("name") String name,
+            @Param("price") Long price,
+            @Param("stock") Integer stock,
+            @Param("imageId") String imageId
+    );
+
 }
