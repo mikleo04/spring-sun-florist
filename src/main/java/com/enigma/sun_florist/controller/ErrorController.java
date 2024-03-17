@@ -22,6 +22,16 @@ public class ErrorController {
         return ResponseEntity.status(exception.getStatusCode()).body(response);
     }
 
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ResponseEntity<CommonResponse<?>> constraintViolationException(ConstraintViolationException exception) {
+        CommonResponse<?> response = CommonResponse.builder()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .message(exception.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
     @ExceptionHandler({DataIntegrityViolationException.class})
     public ResponseEntity<CommonResponse<?>> dataIntegrityViolationExceptionHandler(DataIntegrityViolationException e) {
         CommonResponse.CommonResponseBuilder<Object> builder = CommonResponse.builder();
