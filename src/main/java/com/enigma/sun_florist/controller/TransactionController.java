@@ -2,7 +2,6 @@ package com.enigma.sun_florist.controller;
 
 import com.enigma.sun_florist.constant.ResponseMessage;
 import com.enigma.sun_florist.constant.UrlAPI;
-import com.enigma.sun_florist.dto.request.SearchCustomerRequest;
 import com.enigma.sun_florist.dto.request.SearchTransactionRequest;
 import com.enigma.sun_florist.dto.request.TransactionRequest;
 import com.enigma.sun_florist.dto.response.*;

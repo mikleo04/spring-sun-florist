@@ -56,6 +56,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Customer getOneById(String id) {
         Optional<Customer> customer = customerRepository.getOneById(id);
         if (customer.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND);

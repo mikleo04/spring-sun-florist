@@ -6,7 +6,6 @@ import com.enigma.sun_florist.repository.ImageRepository;
 import com.enigma.sun_florist.service.ImageService;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.ConstraintViolationException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;

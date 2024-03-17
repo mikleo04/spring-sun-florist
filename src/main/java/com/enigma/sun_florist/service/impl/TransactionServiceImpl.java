@@ -5,13 +5,10 @@ import com.enigma.sun_florist.dto.request.SearchTransactionRequest;
 import com.enigma.sun_florist.dto.request.TransactionRequest;
 import com.enigma.sun_florist.dto.response.TransactionDetailResponse;
 import com.enigma.sun_florist.dto.response.TransactionResponse;
-import com.enigma.sun_florist.entity.Customer;
-import com.enigma.sun_florist.entity.Flower;
 import com.enigma.sun_florist.entity.Transaction;
 import com.enigma.sun_florist.repository.TransactionRepository;
 import com.enigma.sun_florist.service.TransactionDetailService;
 import com.enigma.sun_florist.service.TransactionService;
-import com.enigma.sun_florist.specification.FlowerSpecification;
 import com.enigma.sun_florist.specification.TransactionSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -66,6 +63,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<TransactionResponse> getAll(SearchTransactionRequest request) {
         Sort sorting = Sort.by(Sort.Direction.fromString(request.getDirection()), request.getSortBy());
         Pageable pageable = PageRequest.of(request.getPage()-1, request.getSize(), sorting);
