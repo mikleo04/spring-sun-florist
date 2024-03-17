@@ -1,14 +1,20 @@
 package com.enigma.sun_florist.service.impl;
 
 import com.enigma.sun_florist.constant.ResponseMessage;
+import com.enigma.sun_florist.dto.request.SearchTransactionRequest;
 import com.enigma.sun_florist.dto.request.TransactionRequest;
 import com.enigma.sun_florist.dto.response.TransactionDetailResponse;
 import com.enigma.sun_florist.dto.response.TransactionResponse;
+import com.enigma.sun_florist.entity.Customer;
 import com.enigma.sun_florist.entity.Transaction;
 import com.enigma.sun_florist.repository.TransactionRepository;
 import com.enigma.sun_florist.service.TransactionDetailService;
 import com.enigma.sun_florist.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +59,14 @@ public class TransactionServiceImpl implements TransactionService {
         );
 
         return convertTransactionToTransactionResponse(transaction);
+    }
+
+    @Override
+    public Page<TransactionResponse> getAll(SearchTransactionRequest request) {
+        Sort sorting = Sort.by(Sort.Direction.fromString(request.getDirection()), request.getSortBy());
+        Pageable pageable = PageRequest.of(request.getPage()-1, request.getSize(), sorting);
+        Page<Transaction> customerPage = transactionRepository.findAll(pageable);
+        return customerPage.map(this::convertTransactionToTransactionResponse);
     }
 
     private TransactionResponse convertTransactionToTransactionResponse(Transaction transaction) {
