@@ -60,13 +60,17 @@ public class CustomerController {
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "name") String sortBy,
-            @RequestParam(name = "direction", defaultValue = "ASC") String direction
+            @RequestParam(name = "direction", defaultValue = "ASC") String direction,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "status", required = false) Boolean status
     ) {
         SearchCustomerRequest request = SearchCustomerRequest.builder()
                 .size(size)
                 .page(page)
                 .sortBy(sortBy)
                 .direction(direction)
+                .name(name)
+                .status(status)
                 .build();
         Page<CustomerResponse> customerResponses = customerService.getAll(request);
 

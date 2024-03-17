@@ -7,12 +7,14 @@ import com.enigma.sun_florist.dto.response.CustomerResponse;
 import com.enigma.sun_florist.entity.Customer;
 import com.enigma.sun_florist.repository.CustomerRepository;
 import com.enigma.sun_florist.service.CustomerService;
+import com.enigma.sun_florist.specification.CustomerSpecification;
 import com.enigma.sun_florist.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +67,10 @@ public class CustomerServiceImpl implements CustomerService {
     public Page<CustomerResponse> getAll(SearchCustomerRequest request) {
         Sort sorting = Sort.by(Sort.Direction.fromString(request.getDirection()), request.getSortBy());
         Pageable pageable = PageRequest.of(request.getPage()-1, request.getSize(), sorting);
-        Page<Customer> customerPage = customerRepository.findAll(pageable);
+
+        Specification<Customer> specification = CustomerSpecification.getSpecification(request);
+        Page<Customer> customerPage = customerRepository.findAll(specification, pageable);
+
         return  customerPage.map(this::convertCustomerToCustomerResponse);
     }
 
