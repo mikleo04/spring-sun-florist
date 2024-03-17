@@ -120,6 +120,13 @@ public class FlowerServiceImpl implements FlowerService {
         imageService.delete(currentImageId);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStock(String id, Integer stock) {
+        getOneById(id);
+        flowerRepository.updateStock(id, stock);
+    }
+
     private FlowerResponse convertFlowerToFlowerResponse(Flower flower) {
         return FlowerResponse.builder()
                 .id(flower.getId())

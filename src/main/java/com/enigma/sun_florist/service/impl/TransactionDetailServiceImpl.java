@@ -30,6 +30,9 @@ public class TransactionDetailServiceImpl implements TransactionDetailService {
 
             transactionDetailRepository.create(id, flower.getPrice(), detailRequest.getQuantity(), detailRequest.getFlowerId(), transactionId);
 
+            Integer currentStock = flower.getStock() - detailRequest.getQuantity();
+            flowerService.updateStock(flower.getId(), currentStock);
+
             return TransactionDetailResponse.builder()
                     .id(id)
                     .flowerId(detailRequest.getFlowerId())

@@ -13,4 +13,5 @@ public interface FlowerService {
     Page<FlowerResponse> getAll(SearchFlowerRequest request);
     FlowerResponse update(FlowerRequest request, String id);
     void delete(String id);
+    void updateStock(String id, Integer stock);
 }
