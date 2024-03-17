@@ -22,6 +22,8 @@ public class TransactionResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date transDate;
 
+    private Long totalPrice;
+
     private List<TransactionDetailResponse> detailTransaction;
 
 }
