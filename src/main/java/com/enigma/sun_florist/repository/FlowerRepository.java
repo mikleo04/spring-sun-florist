@@ -2,6 +2,7 @@ package com.enigma.sun_florist.repository;
 
 import com.enigma.sun_florist.entity.Flower;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +12,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Repository
-public interface FlowerRepository extends JpaRepository<Flower, String> {
+public interface FlowerRepository extends JpaRepository<Flower, String>, JpaSpecificationExecutor<Flower> {
 
     @Modifying
     @Query(

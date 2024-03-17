@@ -11,12 +11,14 @@ import com.enigma.sun_florist.entity.Image;
 import com.enigma.sun_florist.repository.FlowerRepository;
 import com.enigma.sun_florist.service.FlowerService;
 import com.enigma.sun_florist.service.ImageService;
+import com.enigma.sun_florist.specification.FlowerSpecification;
 import com.enigma.sun_florist.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,7 +79,10 @@ public class FlowerServiceImpl implements FlowerService {
     public Page<FlowerResponse> getAll(SearchFlowerRequest request) {
         Sort sorting = Sort.by(Sort.Direction.fromString(request.getDirection()), request.getSortBy());
         Pageable pageable = PageRequest.of(request.getPage()-1, request.getSize(), sorting);
-        Page<Flower> flowerPage = flowerRepository.findAll(pageable);
+
+        Specification<Flower> specification = FlowerSpecification.getSpecification(request);
+        Page<Flower> flowerPage = flowerRepository.findAll(specification, pageable);
+
         return flowerPage.map(this::convertFlowerToFlowerResponse);
     }
 

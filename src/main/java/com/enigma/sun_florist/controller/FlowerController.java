@@ -74,13 +74,23 @@ public class FlowerController {
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "name") String sortBy,
-            @RequestParam(name = "direction", defaultValue = "ASC") String direction
+            @RequestParam(name = "direction", defaultValue = "ASC") String direction,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "minPrice", required = false) Long minPrice,
+            @RequestParam(name = "maxPrice", required = false) Long maxPrice,
+            @RequestParam(name = "minStock", required = false) Integer minStock,
+            @RequestParam(name = "maxStock", required = false) Integer maxStock
     ) {
         SearchFlowerRequest request = SearchFlowerRequest.builder()
                 .size(size)
                 .page(page)
                 .sortBy(sortBy)
                 .direction(direction)
+                .name(name)
+                .minPrice(minPrice)
+                .maxPrice(maxPrice)
+                .minStock(minStock)
+                .maxStock(maxStock)
                 .build();
         Page<FlowerResponse> flowerResponses = flowerService.getAll(request);
 

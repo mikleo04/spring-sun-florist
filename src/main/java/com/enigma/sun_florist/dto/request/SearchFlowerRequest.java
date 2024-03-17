@@ -22,7 +22,7 @@ public class SearchFlowerRequest {
 
     private Integer minStock;
 
-    private Integer maxPrice;
+    private Long maxPrice;
 
-    private Integer minPrice;
+    private Long minPrice;
 }
