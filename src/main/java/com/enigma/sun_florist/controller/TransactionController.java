@@ -7,6 +7,7 @@ import com.enigma.sun_florist.dto.request.SearchTransactionRequest;
 import com.enigma.sun_florist.dto.request.TransactionRequest;
 import com.enigma.sun_florist.dto.response.*;
 import com.enigma.sun_florist.service.TransactionService;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -60,13 +61,21 @@ public class TransactionController {
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "transDate") String sortBy,
-            @RequestParam(name = "direction", defaultValue = "ASC") String direction
+            @RequestParam(name = "direction", defaultValue = "ASC") String direction,
+            @RequestParam(name = "date", required = false) @JsonFormat(pattern = "yyyy-MM-dd") String date,
+            @RequestParam(name = "startDate", required = false) @JsonFormat(pattern = "yyyy-MM-dd") String startDate,
+            @RequestParam(name = "endDate", required = false) @JsonFormat(pattern = "yyyy-MM-dd") String endDate,
+            @RequestParam(name = "customerId", required = false) String customerId
     ) {
         SearchTransactionRequest request = SearchTransactionRequest.builder()
                 .size(size)
                 .page(page)
                 .sortBy(sortBy)
                 .direction(direction)
+                .date(date)
+                .startDate(startDate)
+                .endDate(endDate)
+                .customerId(customerId)
                 .build();
         Page<TransactionResponse> transactionResponses = transactionService.getAll(request);
 
