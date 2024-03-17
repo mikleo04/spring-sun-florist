@@ -75,14 +75,15 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private TransactionResponse convertTransactionToTransactionResponse(Transaction transaction) {
-        List<TransactionDetailResponse> detailResponses = transaction.getTransactionDetails().stream().map(transactionDetail -> {
-            return TransactionDetailResponse.builder()
+        List<TransactionDetailResponse> detailResponses = transaction.getTransactionDetails().stream()
+                .map(transactionDetail ->
+                    TransactionDetailResponse.builder()
                     .id(transactionDetail.getId())
                     .flowerPrice(transactionDetail.getFlowerPrice())
                     .quantity(transactionDetail.getQuantity())
                     .flowerId(transactionDetail.getFlower().getId())
-                    .build();
-        }).toList();
+                    .build()
+                ).toList();
 
         Long totalPrice = detailResponses.stream()
                 .mapToLong(value -> (value.getQuantity() * value.getFlowerPrice()))
