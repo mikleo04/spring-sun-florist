@@ -130,5 +130,15 @@ public class FlowerController {
         }
     }
 
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<CommonResponse<String>> deleteFlower(@PathVariable(name = "id") String id) {
+        flowerService.delete(id);
+        CommonResponse<String> response = CommonResponse.<String>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message(ResponseMessage.SUCCESS_DELETE_DATA)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
 
 }

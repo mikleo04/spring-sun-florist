@@ -111,6 +111,15 @@ public class FlowerServiceImpl implements FlowerService {
                 .build();
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(String id) {
+        Flower flower = getOneById(id);
+        String currentImageId = flower.getImage().getId();
+        flowerRepository.deleteOneById(id);
+        imageService.delete(currentImageId);
+    }
+
     private FlowerResponse convertFlowerToFlowerResponse(Flower flower) {
         return FlowerResponse.builder()
                 .id(flower.getId())

@@ -58,4 +58,14 @@ public interface FlowerRepository extends JpaRepository<Flower, String> {
             @Param("imageId") String imageId
     );
 
+    @Modifying
+    @Query(
+            nativeQuery = true,
+            value = """
+                    DELETE FROM m_flower
+                    WHERE id = :id
+                    """
+    )
+    void deleteOneById(@Param("id") String id);
+
 }

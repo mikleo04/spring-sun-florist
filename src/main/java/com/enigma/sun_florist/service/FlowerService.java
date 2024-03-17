@@ -12,4 +12,5 @@ public interface FlowerService {
     Flower getOneById(String id);
     Page<FlowerResponse> getAll(SearchFlowerRequest request);
     FlowerResponse update(FlowerRequest request, String id);
+    void delete(String id);
 }
