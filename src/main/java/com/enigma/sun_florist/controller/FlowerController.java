@@ -8,6 +8,8 @@ import com.enigma.sun_florist.dto.response.*;
 import com.enigma.sun_florist.service.FlowerService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
@@ -22,11 +24,13 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = UrlAPI.FLOWER_API)
+@Tag(name = "Flower", description = "The Flower API. Contains all the operations that can be performed on a flower.")
 public class FlowerController {
 
     private final FlowerService flowerService;
     private final ObjectMapper objectMapper;
 
+    @Operation(summary = "Create a new flower with multipart form data")
     @PostMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -54,6 +58,7 @@ public class FlowerController {
 
     }
 
+    @Operation(summary = "Retrieve details of a specific flower by ID")
     @GetMapping(
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -69,6 +74,7 @@ public class FlowerController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Retrieve a list of all flowers with pagination and filter ability")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommonPagingResponse<List<FlowerResponse>>> getAllFlower(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
@@ -113,6 +119,7 @@ public class FlowerController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Update an existing flower by ID")
     @PutMapping(
             path = "/{id}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -140,6 +147,7 @@ public class FlowerController {
         }
     }
 
+    @Operation(summary = "Delete flower based on the ID and image it have")
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<CommonResponse<String>> deleteFlower(@PathVariable(name = "id") String id) {
         flowerService.delete(id);

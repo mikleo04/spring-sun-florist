@@ -9,6 +9,8 @@ import com.enigma.sun_florist.dto.response.CommonResponse;
 import com.enigma.sun_florist.dto.response.CustomerResponse;
 import com.enigma.sun_florist.dto.response.PagingResponse;
 import com.enigma.sun_florist.service.CustomerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -21,10 +23,12 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = UrlAPI.CUSTOMER_API)
+@Tag(name = "Customer", description = "The Customer API. Contains all the operations that can be performed on a customer.")
 public class CustomerController {
 
     private final CustomerService customerService;
 
+    @Operation(summary = "Create a new customer")
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -40,6 +44,7 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Retrieve details of a specific customer by ID")
     @GetMapping(
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -55,6 +60,7 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Retrieve a list of all customers with pagination and filter ability")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommonPagingResponse<List<CustomerResponse>>> getAllCustomer(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
@@ -93,6 +99,7 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Update an existing customer by ID")
     @PutMapping(
             path = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -110,6 +117,7 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Delete customer based on ID using the soft delete method")
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<CommonResponse<CustomerResponse>> deleteCustomer(@PathVariable(name = "id") String id){
         customerService.delete(id);

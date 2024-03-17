@@ -8,6 +8,8 @@ import com.enigma.sun_florist.dto.request.TransactionRequest;
 import com.enigma.sun_florist.dto.response.*;
 import com.enigma.sun_florist.service.TransactionService;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -20,10 +22,12 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = UrlAPI.TRANSACTION_API)
+@Tag(name = "Transaction", description = "The Transaction API. Contains all the operations that can be performed on a transaction.")
 public class TransactionController {
 
     private final TransactionService transactionService;
 
+    @Operation(summary = "Create a new transaction with the details")
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -40,6 +44,7 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Retrieve details of a specific transaction by ID")
     @GetMapping(
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -56,6 +61,7 @@ public class TransactionController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Retrieve a list of all transactions with pagination and filter ability")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CommonPagingResponse<List<TransactionResponse>>> getAllTransaction(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
