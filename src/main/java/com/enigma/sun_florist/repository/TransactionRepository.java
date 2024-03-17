@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, String> {
@@ -25,4 +26,13 @@ public interface TransactionRepository extends JpaRepository<Transaction, String
             @Param("transDate") Date transDate,
             @Param("customerId") String customerId
     );
+
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT * FROM t_transaction
+                    WHERE id = :id
+                    """
+    )
+    Optional<Transaction> getOneById( @Param("id") String id);
 }

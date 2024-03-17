@@ -1,14 +1,18 @@
 package com.enigma.sun_florist.service.impl;
 
+import com.enigma.sun_florist.constant.ResponseMessage;
 import com.enigma.sun_florist.dto.request.TransactionRequest;
 import com.enigma.sun_florist.dto.response.TransactionDetailResponse;
 import com.enigma.sun_florist.dto.response.TransactionResponse;
+import com.enigma.sun_florist.entity.Transaction;
 import com.enigma.sun_florist.repository.TransactionRepository;
 import com.enigma.sun_florist.service.TransactionDetailService;
 import com.enigma.sun_florist.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -28,7 +32,7 @@ public class TransactionServiceImpl implements TransactionService {
         transactionRepository.create(id, new Date(), request.getCustomerId());
         List<TransactionDetailResponse> transactionDetailResponses = transactionDetailService.createBulk(request.getTransactionDetails(), id);
 
-        long totalPrice = transactionDetailResponses.stream()
+        Long totalPrice = transactionDetailResponses.stream()
                 .mapToLong(value -> (value.getQuantity() * value.getFlowerPrice()))
                 .reduce(0, Long::sum);
 
@@ -38,6 +42,39 @@ public class TransactionServiceImpl implements TransactionService {
                 .transDate(new Date())
                 .totalPrice(totalPrice)
                 .detailTransaction(transactionDetailResponses)
+                .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TransactionResponse getById(String id) {
+        Transaction transaction = transactionRepository.getOneById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, ResponseMessage.ERROR_NOT_FOUND)
+        );
+
+        return convertTransactionToTransactionResponse(transaction);
+    }
+
+    private TransactionResponse convertTransactionToTransactionResponse(Transaction transaction) {
+        List<TransactionDetailResponse> detailResponses = transaction.getTransactionDetails().stream().map(transactionDetail -> {
+            return TransactionDetailResponse.builder()
+                    .id(transactionDetail.getId())
+                    .flowerPrice(transactionDetail.getFlowerPrice())
+                    .quantity(transactionDetail.getQuantity())
+                    .flowerId(transactionDetail.getFlower().getId())
+                    .build();
+        }).toList();
+
+        Long totalPrice = detailResponses.stream()
+                .mapToLong(value -> (value.getQuantity() * value.getFlowerPrice()))
+                .reduce(0, Long::sum);
+
+        return TransactionResponse.builder()
+                .id(transaction.getId())
+                .customerId(transaction.getCustomer().getId())
+                .transDate(transaction.getTransDate())
+                .detailTransaction(detailResponses)
+                .totalPrice(totalPrice)
                 .build();
     }
 }
